@@ -1,0 +1,65 @@
+package com.creative.quotes.ui.navigation
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.creative.quotes.domain.model.Quote
+import com.creative.quotes.ui.screens.AllQuotationsScreen
+import com.creative.quotes.ui.screens.EmptyQuotationsScreen
+import com.creative.quotes.ui.screens.QuotationContent
+import com.creative.quotes.ui.viewmodel.QuotesViewModel
+import kotlinx.coroutines.flow.Flow
+
+@Composable
+fun QuotesNavGraph(
+    navController: NavHostController = rememberNavController(),
+    viewModel: QuotesViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val startDestination = if (uiState.quotes.isEmpty()) {
+        Screen.EmptyQuotationsScreen.route
+    } else {
+        Screen.AllQuotationsScreen.route
+    }
+
+    NavHost(
+        navController = navController,
+        startDestination = startDestination
+    ) {
+        composable(route = Screen.AllQuotationsScreen.route) {
+            AllQuotationsScreen(
+                onQuoteClick = { quoteId ->
+                    navController.navigate(Screen.Quotation.createRoute(quoteId))
+                }
+            )
+        }
+        composable(route = Screen.EmptyQuotationsScreen.route) {
+            EmptyQuotationsScreen(viewModel)
+        }
+        composable(
+            route = Screen.Quotation.route,
+            arguments = listOf(navArgument("quoteId") { type = NavType.IntType })
+        ) {
+            val quoteId = it.arguments?.getInt("quoteId")!!
+            val quoteToDelete = uiState.quotes.find { it.id == quoteId}
+            QuotationContent(
+                quoteId,
+                onBackClick = { navController.navigateUp() },
+                onDeleteClick = {
+                    quoteToDelete?.let {
+                        viewModel.deleteQuote(it)
+                        navController.navigateUp()
+                    }
+                }
+            )
+        }
+    }
+}
