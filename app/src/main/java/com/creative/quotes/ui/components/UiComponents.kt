@@ -471,6 +471,11 @@ fun AddQuoteBottomSheet(
         )
         Button(
             onClick = {
+                quoteText = quoteText.trim()
+                author = author.trim()
+                reference = reference.trim()
+                subject = subject.trim()
+
                 isQuoteError = quoteText.isBlank()
                 isAuthorError = author.isBlank()
                 isReferenceError = reference.isBlank()
