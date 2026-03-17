@@ -3,6 +3,7 @@ package com.creative.quotes.ui.components
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,10 +20,15 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -244,8 +250,11 @@ fun QuotationDetailsPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBarAllQuotes(
-    onAddClick: () -> Unit
+    onAddClick: () -> Unit,
+    onRestoreBackup: () -> Unit,
+    onCreateBackup: () -> Unit
 ) {
+    var showMenu by remember { mutableStateOf(false) }
     CenterAlignedTopAppBar(
         title = {
             Text("Quotations")
@@ -256,6 +265,45 @@ fun TopAppBarAllQuotes(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Quotation..."
                 )
+            }
+            Box {
+                IconButton(onClick = { showMenu = true }) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings"
+                    )
+                }
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Create Backup") },
+                        onClick = {
+                            onCreateBackup()
+                            showMenu = false
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Restore Backup") },
+                        onClick = {
+                            onRestoreBackup()
+                            showMenu = false
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
             }
         }
     )
@@ -309,8 +357,11 @@ fun TopAppBarQuotesContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBarAllSubjects(
-    onAddClick: () -> Unit
+    onAddClick: () -> Unit,
+    onRestoreBackup: () -> Unit,
+    onCreateBackup: () -> Unit
 ) {
+    var showMenu by remember { mutableStateOf(false) }
     CenterAlignedTopAppBar(
         title = {
             Text("Quotations")
@@ -323,6 +374,45 @@ fun TopBarAllSubjects(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Quotation..."
                 )
+            }
+            Box {
+                IconButton(onClick = { showMenu = true }) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings"
+                    )
+                }
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Create Backup") },
+                        onClick = {
+                            onCreateBackup()
+                            showMenu = false
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Restore Backup") },
+                        onClick = {
+                            onRestoreBackup()
+                            showMenu = false
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
             }
         }
     )

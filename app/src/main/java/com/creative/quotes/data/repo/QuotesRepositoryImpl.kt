@@ -51,4 +51,10 @@ class QuotesRepositoryImpl @Inject constructor(
     }
 
     override fun getAllQuotesBySubject(subject: String): Flow<List<Quote>> = quotesDao.getQuotesBySubject(subject)
+    override suspend fun insertAllQuotes(quotes: List<Quote>) {
+        quotes.map {
+            quotesDao.insertQuote(it.toEntity())
+            it.toEntity()
+        }
+    }
 }

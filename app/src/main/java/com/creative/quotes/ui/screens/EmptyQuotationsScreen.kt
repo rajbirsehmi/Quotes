@@ -1,13 +1,11 @@
 package com.creative.quotes.ui.screens
 
-import android.util.Log
-import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -22,28 +20,55 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creative.quotes.ui.components.AddQuoteBottomSheet
 import com.creative.quotes.ui.components.TopAppBarAllQuotes
+import com.creative.quotes.ui.viewmodel.BackupViewModel
 import com.creative.quotes.ui.viewmodel.QuotesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmptyQuotationsScreen(
-    viewModel: QuotesViewModel = hiltViewModel()
+    viewModel: QuotesViewModel = hiltViewModel(),
+    backupViewModel: BackupViewModel = hiltViewModel()
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
 
+    val context = LocalContext.current
+
+    val createBackupLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let { backupViewModel.createBackup(it, context) }
+    }
+
+    // Launcher for Opening a file (Restore)
+    val restoreBackupLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let { backupViewModel.restoreBackup(it, context) }
+    }
+
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBarAllQuotes(onAddClick = {
-                showBottomSheet = true
-            })
+            TopAppBarAllQuotes(
+                onAddClick = {
+                    showBottomSheet = true
+                },
+                onRestoreBackup = {
+                    restoreBackupLauncher.launch(arrayOf("application/json"))
+                },
+                onCreateBackup = {
+                    createBackupLauncher.launch("quotes_backup.json")
+                }
+            )
         }
     ) { innerPadding ->
         Box(
