@@ -2,7 +2,9 @@ package com.creative.quotes.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -47,15 +49,41 @@ fun QuotationCard(
 ) {
     Card(
         modifier = Modifier
-            .padding(12.dp)
+            .padding(top = 8.dp, end = 8.dp, start = 8.dp)
             .fillMaxWidth()
             .clickable { onQuoteClick(quote.id ?: 0) }
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = quote.quote)
-            Text(text = quote.author)
-            Text(text = quote.subject)
-            Text(text = quote.reference)
+        Column(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = quote.quote,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .fillMaxWidth()
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(all = 4.dp),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "-- ${quote.author}, ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    minLines = 1
+                )
+                Text(
+                    text = quote.reference,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    minLines = 1
+                )
+            }
         }
     }
 }
@@ -63,15 +91,16 @@ fun QuotationCard(
 @Composable
 @Preview(
     device = "spec:width=1440px,height=3120px,dpi=560,cutout=punch_hole",
-    uiMode = Configuration.UI_MODE_TYPE_NORMAL
+    uiMode = Configuration.UI_MODE_TYPE_NORMAL,
+    showBackground = true
 )
 fun QuotationCardPreview() {
     val quotes: List<Quote> = listOf(
         Quote(
             id = 1,
             quote = "This is a quote",
-            author = "Author",
-            reference = "Reference",
+            author = "AuthorAuthorAuthor",
+            reference = "ReferenceReference",
             subject = "Subject",
             timestamp = System.currentTimeMillis()
         ),
@@ -79,7 +108,7 @@ fun QuotationCardPreview() {
             id = 1,
             quote = "This is a quote",
             author = "Author",
-            reference = "Reference",
+            reference = "ReferenceReference",
             subject = "Subject",
             timestamp = System.currentTimeMillis()
         ),
@@ -101,7 +130,8 @@ fun QuotationCardPreview() {
         )
     )
     LazyColumn(
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier
+            .padding(8.dp)
             .navigationBarsPadding()
             .statusBarsPadding()
             .fillMaxSize()
@@ -115,6 +145,101 @@ fun QuotationCardPreview() {
     }
 }
 
+@Composable
+fun SubjectCard(
+    subject: String,
+    onSubjectClick: (subject: String) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .padding(top = 8.dp, end = 8.dp, start = 8.dp)
+            .fillMaxWidth()
+            .clickable { onSubjectClick(subject) }
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = subject,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun SubjectCardPreview() {
+    val subjects: List<String> = listOf(
+        "Subject1",
+        "Subject2",
+        "Subject3",
+        "Subject4"
+    )
+    LazyColumn(
+        modifier = Modifier
+            .padding(8.dp)
+            .navigationBarsPadding()
+            .statusBarsPadding()
+            .fillMaxSize()
+    ) {
+        items(subjects) { subject ->
+            SubjectCard(subject, onSubjectClick = {})
+        }
+    }
+}
+
+@Composable
+fun QuotationDetails(
+    quote: Quote?,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier
+            .fillMaxSize()
+            .padding(24.dp)
+    ) {
+        quote?.let {
+            Text(
+                text = it.quote,
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier
+                    .fillMaxWidth(),
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = "— ${it.author}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+        }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun QuotationDetailsPreview() {
+    val quote: Quote = Quote(
+        id = 1,
+        quote = "This is a quote",
+        author = "Author",
+        reference = "Reference",
+        subject = "Subject",
+        timestamp = System.currentTimeMillis()
+    )
+    QuotationDetails(
+        quote = quote,
+        modifier = Modifier
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -175,6 +300,60 @@ fun TopAppBarQuotesContent(
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete Quotation..."
+                )
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBarAllSubjects(
+    onAddClick: () -> Unit
+) {
+    CenterAlignedTopAppBar(
+        title = {
+            Text("Quotations")
+        },
+        actions = {
+            IconButton(
+                onAddClick
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Quotation..."
+                )
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBarQuotesBySubject(
+    subject: String,
+    onBackClick: () -> Unit,
+    onAddClick: () -> Unit
+) {
+    CenterAlignedTopAppBar(
+        title = {
+            Text(subject)
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back to Subjects"
+                )
+            }
+        },
+        actions = {
+            IconButton(
+                onAddClick
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Quotation..."
                 )
             }
         }

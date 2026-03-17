@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.creative.quotes.domain.model.Quote
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -26,10 +27,12 @@ interface QuoteDao {
     @Query("SELECT DISTINCT subject FROM quotes ORDER BY subject ASC")
     fun getAllSubjects(): Flow<List<String>>
 
+    @Query("SELECT * FROM quotes WHERE subject = :subject ORDER BY quote ASC")
+    fun getQuotesBySubject(subject: String): Flow<List<Quote>>
+
     @Query("SELECT DISTINCT author FROM quotes ORDER BY author ASC")
     fun getAllAuthors(): Flow<List<String>>
 
     @Update
     suspend fun updateQuote(quote: QuoteEntity)
-
 }

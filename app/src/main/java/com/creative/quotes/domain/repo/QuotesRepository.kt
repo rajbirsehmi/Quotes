@@ -18,5 +18,7 @@ interface QuotesRepository {
     fun getAllAuthors(): Flow<List<String>>
 
     suspend fun updateQuote(quote: Quote)
+
+    fun getAllQuotesBySubject(subject: String): Flow<List<Quote>>
 }
 

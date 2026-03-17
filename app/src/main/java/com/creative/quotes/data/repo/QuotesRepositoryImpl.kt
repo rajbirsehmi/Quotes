@@ -49,4 +49,6 @@ class QuotesRepositoryImpl @Inject constructor(
     override suspend fun updateQuote(quote: Quote) {
         quotesDao.updateQuote(quote.toEntity())
     }
+
+    override fun getAllQuotesBySubject(subject: String): Flow<List<Quote>> = quotesDao.getQuotesBySubject(subject)
 }

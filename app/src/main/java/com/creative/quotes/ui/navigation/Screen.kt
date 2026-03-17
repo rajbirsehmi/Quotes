@@ -6,4 +6,12 @@ sealed class Screen(val route: String) {
     object Quotation : Screen("quotation/{quoteId}") {
         fun createRoute(quoteId: Int) = "quotation/$quoteId"
     }
+
+    object AllSubjectsScreen: Screen("all_subjects_screen")
+
+    object AllAuthorsScreen: Screen("all_authors_screen")
+
+    object QuotesBySubjectScreen: Screen("subject_quotes/{subject}") {
+        fun createRoute(subject: String) = "subject_quotes/$subject"
+    }
 }
