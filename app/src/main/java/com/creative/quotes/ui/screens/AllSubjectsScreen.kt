@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -17,11 +18,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.creative.quotes.ui.components.AddQuoteBottomSheet
 import com.creative.quotes.ui.components.SubjectCard
-import com.creative.quotes.ui.components.TopBarAllSubjects
+import com.creative.quotes.ui.components.TopAppBarAllQuotes
 import com.creative.quotes.ui.viewmodel.BackupViewModel
 import com.creative.quotes.ui.viewmodel.QuotesViewModel
 
@@ -55,7 +57,7 @@ fun AllSubjectsScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopBarAllSubjects(
+            TopAppBarAllQuotes(
                 onAddClick = {
                     showBottomSheet = true
                 },
@@ -75,6 +77,11 @@ fun AllSubjectsScreen(
                 SubjectCard(
                     subject,
                     onSubjectClick = { onSubjectClick(subject) }
+                )
+                HorizontalDivider(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp),
+                    thickness = 0.5.dp
                 )
             }
         }
