@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -166,7 +168,7 @@ fun SubjectCard(
             modifier = Modifier.weight(1.0f)
         )
         Icon(
-            imageVector = Icons.Default.KeyboardArrowRight,
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = "Back to Subject",
             modifier = Modifier
                 .padding(16.dp, 12.dp, 16.dp, 12.dp)
@@ -236,7 +238,7 @@ fun QuotationDetails(
     showBackground = true
 )
 fun QuotationDetailsPreview() {
-    val quote: Quote = Quote(
+    val quote = Quote(
         id = 1,
         quote = "This is a quote",
         author = "Author",
@@ -327,7 +329,7 @@ fun TopAppBarQuotesContent(
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back to quotations"
                 )
             }
@@ -371,7 +373,7 @@ fun TopBarQuotesBySubject(
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back to Subjects"
                 )
             }
