@@ -1,11 +1,11 @@
 package com.creative.quotes.ui.components
 
-import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -20,12 +20,12 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -53,51 +53,44 @@ fun QuotationCard(
     quote: Quote,
     onQuoteClick: (Int) -> Unit
 ) {
-    Card(
+    Column(
         modifier = Modifier
-            .padding(top = 8.dp, end = 8.dp, start = 8.dp)
+//            .padding(16.dp, 12.dp, 16.dp, 12.dp)
             .fillMaxWidth()
             .clickable { onQuoteClick(quote.id ?: 0) }
     ) {
-        Column(
+        Text(
+            text = quote.quote,
+            style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
-                .padding(12.dp)
+                .padding(16.dp, 12.dp, 16.dp, 12.dp)
                 .fillMaxWidth()
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp, 0.dp, 16.dp, 16.dp),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = quote.quote,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .padding(bottom = 8.dp)
-                    .fillMaxWidth()
+                text = "-- ${quote.author}, ",
+                style = MaterialTheme.typography.bodyMedium,
+                minLines = 1
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(all = 4.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "-- ${quote.author}, ",
-                    style = MaterialTheme.typography.bodyMedium,
-                    minLines = 1
-                )
-                Text(
-                    text = quote.reference,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary,
-                    minLines = 1
-                )
-            }
+            Text(
+                text = quote.reference,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary,
+                minLines = 1
+            )
         }
     }
 }
 
 @Composable
 @Preview(
-    device = "spec:width=1440px,height=3120px,dpi=560,cutout=punch_hole",
-    uiMode = Configuration.UI_MODE_TYPE_NORMAL,
+    name = "2 - Quotation Card",
     showBackground = true
 )
 fun QuotationCardPreview() {
@@ -137,7 +130,7 @@ fun QuotationCardPreview() {
     )
     LazyColumn(
         modifier = Modifier
-            .padding(8.dp)
+            .padding(16.dp, 12.dp, 16.dp, 12.dp)
             .navigationBarsPadding()
             .statusBarsPadding()
             .fillMaxSize()
@@ -156,29 +149,36 @@ fun SubjectCard(
     subject: String,
     onSubjectClick: (subject: String) -> Unit
 ) {
-    Card(
+    Row(
         modifier = Modifier
-            .padding(top = 8.dp, end = 8.dp, start = 8.dp)
             .fillMaxWidth()
-            .clickable { onSubjectClick(subject) }
+            .padding(4.dp)
+            .clickable { onSubjectClick(subject) },
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
+        Text(
+            text = subject,
+            style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = subject,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-        }
+                .padding(16.dp, 12.dp, 16.dp, 12.dp)
+        )
+        Spacer(
+            modifier = Modifier.weight(1.0f)
+        )
+        Icon(
+            imageVector = Icons.Default.KeyboardArrowRight,
+            contentDescription = "Back to Subject",
+            modifier = Modifier
+                .padding(16.dp, 12.dp, 16.dp, 12.dp)
+        )
     }
 }
 
 @Composable
-@Preview(showBackground = true)
+@Preview(
+    name = "1 - Subject Card",
+    showBackground = true
+)
 fun SubjectCardPreview() {
     val subjects: List<String> = listOf(
         "Subject1",
@@ -231,7 +231,10 @@ fun QuotationDetails(
 }
 
 @Composable
-@Preview(showBackground = true)
+@Preview(
+    name = "3 - Quotation Details",
+    showBackground = true
+)
 fun QuotationDetailsPreview() {
     val quote: Quote = Quote(
         id = 1,
@@ -349,70 +352,6 @@ fun TopAppBarQuotesContent(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete Quotation..."
                 )
-            }
-        }
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBarAllSubjects(
-    onAddClick: () -> Unit,
-    onRestoreBackup: () -> Unit,
-    onCreateBackup: () -> Unit
-) {
-    var showMenu by remember { mutableStateOf(false) }
-    CenterAlignedTopAppBar(
-        title = {
-            Text("Quotations")
-        },
-        actions = {
-            IconButton(
-                onAddClick
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Quotation..."
-                )
-            }
-            Box {
-                IconButton(onClick = { showMenu = true }) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings"
-                    )
-                }
-                DropdownMenu(
-                    expanded = showMenu,
-                    onDismissRequest = { showMenu = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Create Backup") },
-                        onClick = {
-                            onCreateBackup()
-                            showMenu = false
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = null
-                            )
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Restore Backup") },
-                        onClick = {
-                            onRestoreBackup()
-                            showMenu = false
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = null
-                            )
-                        }
-                    )
-                }
             }
         }
     )
