@@ -22,58 +22,45 @@ class QuotesViewModel @Inject constructor(
     private val quotesRepository: QuotesRepository
 ) : ViewModel() {
 
-    private val _selectedSubject = MutableStateFlow<String?>(null)
+    private val _selectedSubject = MutableStateFlow("")
 
-    fun setSubject(subject: String?) {
+    fun setSubject(subject: String) {
         _selectedSubject.value = subject
     }
 
-    val uiState: StateFlow<QuotesUiState> = _selectedSubject
-        .flatMapLatest { subject ->
-            val quotesFlow = if (subject == null) {
-                quotesRepository.getAllQuotes()
-            } else {
-                quotesRepository.getAllQuotesBySubject(subject)
-            }
-            combine(
-                quotesFlow,
-                quotesRepository.getAllSubjects()
-            ) { quotes, subjects ->
-                QuotesUiState(
-                    quotes = quotes,
-                    subjects = subjects,
-                    quotesBySubject = if (subject != null) quotes else emptyList(),
-                    isLoading = false
-                )
-            }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = QuotesUiState(isLoading = true)
+    private val subjectsFlow = quotesRepository.getAllSubjects()
+
+    private val quotesBySubjectFlow = _selectedSubject.flatMapLatest { subject ->
+        quotesRepository.getAllQuotesBySubject(subject)
+    }
+
+    val uiState: StateFlow<QuotesUiState> = combine(
+        quotesBySubjectFlow,
+        subjectsFlow
+    ) { quotes, subjects ->
+        QuotesUiState(
+            quotes = quotes,
+            subjects = subjects,
+            quotesBySubject = quotes,
+            isLoading = false
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(100),
+        initialValue = QuotesUiState(isLoading = true)
+    )
 
     fun addQuote(quote: Quote) {
-        viewModelScope.launch {
-            quotesRepository.insertQuote(quote)
-        }
+        viewModelScope.launch { quotesRepository.insertQuote(quote) }
     }
 
     fun deleteQuote(quote: Quote) {
-        viewModelScope.launch {
-            quotesRepository.deleteQuote(quote)
-        }
+        viewModelScope.launch { quotesRepository.deleteQuote(quote) }
+    }
+
+    fun updateQuote(quote: Quote) {
+        viewModelScope.launch { quotesRepository.updateQuote(quote) }
     }
 
     fun getQuoteById(id: Int) = quotesRepository.getQuoteById(id)
-
-    fun getAllQuotesBySubject(subject: String) = quotesRepository.getAllQuotesBySubject(subject)
-
-
-    fun updateQuote(quote: Quote) {
-        viewModelScope.launch {
-            quotesRepository.updateQuote(quote)
-        }
-    }
-
-    fun getAllSubjects() = quotesRepository.getAllSubjects()
 }
