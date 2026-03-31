@@ -14,8 +14,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,6 +25,7 @@ import com.creative.quotes.ui.components.AddQuoteBottomSheet
 import com.creative.quotes.ui.components.QuotationCard
 import com.creative.quotes.ui.components.TopBarQuotesBySubject
 import com.creative.quotes.ui.viewmodel.QuotesViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +40,9 @@ fun QuotesBySubjectScreen(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+
+    val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(subject) {
         viewModel.setSubject(subject)
@@ -83,8 +89,13 @@ fun QuotesBySubjectScreen(
             dragHandle = null,
         ) {
             AddQuoteBottomSheet(onQuoteAdded = {
+                focusManager.clearFocus()
                 viewModel.addQuote(it)
-                showBottomSheet = false
+                scope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    showBottomSheet = false
+                }
             })
         }
     }

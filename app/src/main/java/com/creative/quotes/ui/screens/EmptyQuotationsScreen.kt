@@ -17,16 +17,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creative.quotes.ui.components.AddQuoteBottomSheet
 import com.creative.quotes.ui.components.TopAppBarAllQuotes
 import com.creative.quotes.ui.viewmodel.BackupViewModel
 import com.creative.quotes.ui.viewmodel.QuotesViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +43,8 @@ fun EmptyQuotationsScreen(
     )
 
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
 
     val createBackupLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json")
@@ -102,6 +107,12 @@ fun EmptyQuotationsScreen(
             ) {
                 AddQuoteBottomSheet(onQuoteAdded = {
                     viewModel.addQuote(it)
+                    focusManager.clearFocus()
+                    scope.launch {
+                        sheetState.hide()
+                    }.invokeOnCompletion {
+                        showBottomSheet = false
+                    }
                 })
             }
         }

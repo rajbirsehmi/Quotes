@@ -10,8 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.creative.quotes.domain.model.Quote
@@ -20,6 +22,7 @@ import com.creative.quotes.ui.components.EditQuoteBottomSheet
 import com.creative.quotes.ui.components.QuotationDetails
 import com.creative.quotes.ui.components.TopAppBarQuotesContent
 import com.creative.quotes.ui.viewmodel.QuotesViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +40,10 @@ fun QuotationContent(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+
+    val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
+
 
     // Logic for the actual Alert Dialog
     if (showDeleteDialog) {
@@ -77,8 +84,13 @@ fun QuotationContent(
             dragHandle = null,
         ) {
             EditQuoteBottomSheet(onQuoteEdited = {
+                focusManager.clearFocus()
                 viewModel.updateQuote(it)
-                showBottomSheet = false
+                scope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    showBottomSheet = false
+                }
             }, quote)
         }
     }
