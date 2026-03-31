@@ -10,14 +10,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.creative.quotes.domain.model.Quote
 import com.creative.quotes.ui.screens.AllQuotationsScreen
 import com.creative.quotes.ui.screens.AllSubjectsScreen
 import com.creative.quotes.ui.screens.EmptyQuotationsScreen
 import com.creative.quotes.ui.screens.QuotationContent
 import com.creative.quotes.ui.screens.QuotesBySubjectScreen
 import com.creative.quotes.ui.viewmodel.QuotesViewModel
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun QuotesNavGraph(
@@ -72,7 +70,7 @@ fun QuotesNavGraph(
             arguments = listOf(navArgument("quoteId") { type = NavType.IntType })
         ) {
             val quoteId = it.arguments?.getInt("quoteId")!!
-            val quoteToDelete = uiState.quotes.find { it.id == quoteId}
+            val quoteToDelete = uiState.quotes.find { it.id == quoteId }
             QuotationContent(
                 quoteId,
                 onBackClick = { navController.navigateUp() },
