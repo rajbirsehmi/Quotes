@@ -46,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.creative.quotes.domain.model.Quote
@@ -67,6 +68,7 @@ fun QuotationCard(
             modifier = Modifier
                 .padding(16.dp, 12.dp, 16.dp, 12.dp)
                 .fillMaxWidth()
+                .testTag("quote_text")
         )
         Row(
             modifier = Modifier
@@ -76,11 +78,13 @@ fun QuotationCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
+                modifier = Modifier.testTag("quote_author"),
                 text = "-- ${quote.author}, ",
                 style = MaterialTheme.typography.bodyMedium,
                 minLines = 1
             )
             Text(
+                modifier = Modifier.testTag("quote_reference"),
                 text = quote.reference,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.secondary,
@@ -216,7 +220,8 @@ fun QuotationDetails(
                 text = it.quote,
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .testTag("quote_text"),
             )
             Row(
                 modifier = Modifier
@@ -224,6 +229,7 @@ fun QuotationDetails(
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
+                    modifier = Modifier.testTag("quote_author"),
                     text = "— ${it.author}",
                     style = MaterialTheme.typography.bodyLarge
                 )
@@ -419,7 +425,8 @@ fun AddQuoteBottomSheet(
         OutlinedTextField(
             modifier = Modifier
                 .padding(top = 4.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("quote_input"),
             minLines = 3,
             value = quoteText,
             label = { Text("Quote") },
@@ -440,7 +447,8 @@ fun AddQuoteBottomSheet(
         OutlinedTextField(
             modifier = Modifier
                 .padding(top = 4.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("author_input"),
             singleLine = true,
             value = author,
             label = { Text("Author") },
@@ -461,7 +469,8 @@ fun AddQuoteBottomSheet(
         OutlinedTextField(
             modifier = Modifier
                 .padding(top = 4.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("reference_input"),
             singleLine = true,
             value = reference,
             label = { Text("Reference") },
@@ -482,7 +491,8 @@ fun AddQuoteBottomSheet(
         OutlinedTextField(
             modifier = Modifier
                 .padding(top = 4.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("subject_input"),
             singleLine = true,
             value = subject,
             label = { Text("Subject") },
@@ -560,7 +570,8 @@ fun EditQuoteBottomSheet(
         OutlinedTextField(
             modifier = Modifier
                 .padding(top = 4.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("quote_input"),
             minLines = 3,
             value = quoteText,
             label = { Text("Quote") },
@@ -581,7 +592,8 @@ fun EditQuoteBottomSheet(
         OutlinedTextField(
             modifier = Modifier
                 .padding(top = 4.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("author_input"),
             singleLine = true,
             value = author,
             label = { Text("Author") },
@@ -602,7 +614,8 @@ fun EditQuoteBottomSheet(
         OutlinedTextField(
             modifier = Modifier
                 .padding(top = 4.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("reference_input"),
             singleLine = true,
             value = reference,
             label = { Text("Reference") },
@@ -623,7 +636,8 @@ fun EditQuoteBottomSheet(
         OutlinedTextField(
             modifier = Modifier
                 .padding(top = 4.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("subject_input"),
             singleLine = true,
             value = subject,
             label = { Text("Subject") },
