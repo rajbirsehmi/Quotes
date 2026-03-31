@@ -7,13 +7,21 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.FixMethodOrder
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runners.MethodSorters
 
+@HiltAndroidTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class QuoteUiAutomation {
+
+    @get:Rule
+    var hiltRule = HiltAndroidRule(this)
+
     private var packageName: String = "com.creative.quotes"
     private lateinit var device: UiDevice
     val testTestQuote = "Test Quote"
@@ -36,6 +44,7 @@ class QuoteUiAutomation {
 
     @Before
     fun setup() {
+        hiltRule.inject()
         device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         device.pressHome()
 
@@ -48,6 +57,16 @@ class QuoteUiAutomation {
     }
 
     @Test
+    fun testFullUserJourney() {
+        test01_AddQuote()
+        test02_OpenTestQuote()
+        test03_OpenFullQuoteDetail()
+        test04_EditQuote()
+        test05_DeleteQuote()
+        test06_NoQuotesFound()
+    }
+
+//    @Test
     fun test01_AddQuote() {
         val btnAdd = device.wait(Until.findObject(By.desc(textAddQuotation)), 10000)
         btnAdd?.click() ?: throw AssertionError("Add button ('Add Quotation...') not found")
@@ -84,7 +103,7 @@ class QuoteUiAutomation {
         assert(isQuoteAdded != null)
     }
 
-    @Test
+//    @Test
     fun test02_OpenTestQuote() {
         device.wait(Until.findObject(By.text(textTestSubject)), 5000)?.click()
 
@@ -107,7 +126,7 @@ class QuoteUiAutomation {
         }
     }
 
-    @Test
+//    @Test
     fun test03_OpenFullQuoteDetail() {
         device.wait(Until.findObject(By.text(textTestSubject)), 5000)?.click()
         device.wait(Until.findObject(By.text(testTestQuote)), 5000)?.click()
@@ -124,7 +143,7 @@ class QuoteUiAutomation {
         }
     }
 
-    @Test
+//    @Test
     fun test04_EditQuote() {
         device.wait(Until.findObject(By.text(textTestSubject)), 5000)?.click()
         device.wait(Until.findObject(By.text(testTestQuote)), 5000)?.click()
@@ -152,10 +171,11 @@ class QuoteUiAutomation {
             text = textNewSubject
         } ?: throw AssertionError("Subject input field not found")
 
-        device.findObject(By.clazz("android.widget.EditText").hasChild(By.text("Reference")))?.apply {
-            click()
-            text = textNewReference
-        } ?: throw AssertionError("Reference input field not found")
+        device.findObject(By.clazz("android.widget.EditText").hasChild(By.text("Reference")))
+            ?.apply {
+                click()
+                text = textNewReference
+            } ?: throw AssertionError("Reference input field not found")
 
         // Use By.text for the update button since it contains the text "Update Quote"
         val btnUpdate = device.wait(Until.findObject(By.text(textUpdateQuotation)), 10000)
@@ -164,7 +184,7 @@ class QuoteUiAutomation {
         assert(
             device.wait(Until.findObject(By.text(textNewQuote)), 5000) != null
         ) { "Quote not updated" }
-        
+
         assert(
             device.wait(Until.findObject(By.textContains(textNewAuthor)), 5000) != null
         ) { "Author not updated" }
@@ -177,7 +197,7 @@ class QuoteUiAutomation {
         ) { "Subject not Found" }
     }
 
-    @Test
+//    @Test
     fun test05_DeleteQuote() {
         device.wait(Until.findObject(By.text(textNewSubject)), 5000).click()
         device.wait(Until.findObject(By.text(textNewQuote)), 500).click()
@@ -197,7 +217,7 @@ class QuoteUiAutomation {
         }
     }
 
-    @Test
+//    @Test
     fun test06_NoQuotesFound() {
         assert(device.wait(Until.findObject(By.text(textNoQuotesFound)), 5000) != null)
     }
