@@ -24,9 +24,6 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="testNavigation_QuotationDetails()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="testNavigation_BackToSubject()">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2026-03-31T08:52:28.265121500Z">
@@ -59,6 +56,9 @@
           </Target>
         </DropdownSelection>
         <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="QuoteUiAutomation">
+        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
   </component>
