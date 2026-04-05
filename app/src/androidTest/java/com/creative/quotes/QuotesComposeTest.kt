@@ -67,11 +67,6 @@ class QuotesComposeTest {
         composeTestRule.onNodeWithText("Reference").performTextInput("Compose Reference")
         composeTestRule.onNodeWithText("Subject").performTextInput("Compose Subject")
         composeTestRule.onNodeWithText("Save Quote").performClick()
-
-//        composeTestRule.waitUntilDoesNotExist(hasText("Save Quote"), timeoutMillis = 500)
-
-//        composeTestRule.waitForIdle()
-//        composeTestRule.onNode(isRoot()).performClick()
     }
 
     private fun helper_UpdateQuoteData() {
