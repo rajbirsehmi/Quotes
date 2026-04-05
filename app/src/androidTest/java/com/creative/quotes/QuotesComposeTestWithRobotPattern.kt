@@ -10,7 +10,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @HiltAndroidTest
-class QuoteUiAutomation {
+class QuotesComposeTestWithRobotPattern {
 
     private fun robot(block: QuoteRobot.() -> Unit) = robot.apply(block)
 
