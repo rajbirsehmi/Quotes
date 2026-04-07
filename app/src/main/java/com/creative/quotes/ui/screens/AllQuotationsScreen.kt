@@ -12,14 +12,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.creative.quotes.ui.components.AddQuoteBottomSheet
 import com.creative.quotes.ui.components.QuotationCard
 import com.creative.quotes.ui.components.TopAppBarAllQuotes
 import com.creative.quotes.ui.viewmodel.QuotesViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +35,8 @@ fun AllQuotationsScreen(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+    val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -59,14 +64,25 @@ fun AllQuotationsScreen(
 
         if (showBottomSheet) {
             ModalBottomSheet(
-                onDismissRequest = { showBottomSheet = false },
+                onDismissRequest = { 
+                    showBottomSheet = false
+                    viewModel.resetForm()
+                },
                 sheetState = sheetState,
                 dragHandle = null,
             ) {
-                AddQuoteBottomSheet(onQuoteAdded = {
-                    viewModel.addQuote(it)
-                    showBottomSheet = false
-                })
+                AddQuoteBottomSheet(
+                    viewModel = viewModel,
+                    onQuoteAdded = {
+                        focusManager.clearFocus()
+                        viewModel.addQuote(it)
+                        scope.launch {
+                            sheetState.hide()
+                        }.invokeOnCompletion {
+                            showBottomSheet = false
+                        }
+                    }
+                )
             }
         }
     }

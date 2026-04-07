@@ -70,28 +70,29 @@ fun QuotationContent(
         }
     ) { innerPadding ->
         QuotationDetails(quote = quote, modifier = Modifier.padding(innerPadding))
-//        Column(modifier = Modifier.padding(innerPadding)) {
-//            quote?.let {
-//                Text(text = it.quote, style = MaterialTheme.typography.headlineMedium)
-//                Text(text = "— ${it.author}", style = MaterialTheme.typography.bodyLarge)
-//            } ?: Text("Loading or Quote not found...")
-//        }
     }
     if (showBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
+            onDismissRequest = { 
+                showBottomSheet = false 
+                viewModel.resetForm()
+            },
             sheetState = sheetState,
             dragHandle = null,
         ) {
-            EditQuoteBottomSheet(onQuoteEdited = {
-                focusManager.clearFocus()
-                viewModel.updateQuote(it)
-                scope.launch {
-                    sheetState.hide()
-                }.invokeOnCompletion {
-                    showBottomSheet = false
-                }
-            }, quote)
+            EditQuoteBottomSheet(
+                viewModel = viewModel,
+                onQuoteEdited = {
+                    focusManager.clearFocus()
+                    viewModel.updateQuote(it)
+                    scope.launch {
+                        sheetState.hide()
+                    }.invokeOnCompletion {
+                        showBottomSheet = false
+                    }
+                }, 
+                quote = quote
+            )
         }
     }
 }

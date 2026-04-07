@@ -15,6 +15,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -29,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,16 +46,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.creative.quotes.domain.model.Quote
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Share
+import com.creative.quotes.ui.viewmodel.QuotesViewModel
 
 @Composable
 fun QuotationCard(
@@ -56,7 +57,6 @@ fun QuotationCard(
 ) {
     Column(
         modifier = Modifier
-//            .padding(16.dp, 12.dp, 16.dp, 12.dp)
             .fillMaxWidth()
             .clickable { onQuoteClick(quote.id ?: 0) }
             .testTag("quote_card")
@@ -157,7 +157,7 @@ fun SubjectCard(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(4.dp)
+//            .padding(4.dp)
             .clickable { onSubjectClick(subject) },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -398,13 +398,18 @@ fun TopBarQuotesBySubject(
 
 @Composable
 fun AddQuoteBottomSheet(
+    viewModel: QuotesViewModel,
     onQuoteAdded: (Quote) -> Unit
 ) {
-    var quoteText by remember { mutableStateOf("") }
-    var author by remember { mutableStateOf("") }
-    var reference by remember { mutableStateOf("") }
-    var subject by remember { mutableStateOf("") }
-    var timeStamp by remember { mutableLongStateOf(0) }
+    val quoteText by viewModel.quoteText.collectAsStateWithLifecycle()
+    val author by viewModel.author.collectAsStateWithLifecycle()
+    val reference by viewModel.reference.collectAsStateWithLifecycle()
+    val subject by viewModel.subject.collectAsStateWithLifecycle()
+
+    val isQuoteError by viewModel.isQuoteError.collectAsStateWithLifecycle()
+    val isAuthorError by viewModel.isAuthorError.collectAsStateWithLifecycle()
+    val isReferenceError by viewModel.isReferenceError.collectAsStateWithLifecycle()
+    val isSubjectError by viewModel.isSubjectError.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -415,11 +420,6 @@ fun AddQuoteBottomSheet(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        var isQuoteError by remember { mutableStateOf(false) }
-        var isAuthorError by remember { mutableStateOf(false) }
-        var isReferenceError by remember { mutableStateOf(false) }
-        var isSubjectError by remember { mutableStateOf(false) }
-
         Text("Add New Quote", style = MaterialTheme.typography.titleLarge)
         OutlinedTextField(
             modifier = Modifier
@@ -429,10 +429,7 @@ fun AddQuoteBottomSheet(
             minLines = 3,
             value = quoteText,
             label = { Text("Quote") },
-            onValueChange = {
-                quoteText = it
-                if (it.isNotBlank()) isQuoteError = false // Clear error when typing
-            },
+            onValueChange = { viewModel.updateQuoteText(it) },
             isError = isQuoteError,
             supportingText = {
                 if (isQuoteError) {
@@ -451,10 +448,7 @@ fun AddQuoteBottomSheet(
             singleLine = true,
             value = author,
             label = { Text("Author") },
-            onValueChange = {
-                author = it
-                if (it.isNotBlank()) isAuthorError = false
-            },
+            onValueChange = { viewModel.updateAuthor(it) },
             isError = isAuthorError,
             supportingText = {
                 if (isAuthorError) {
@@ -473,10 +467,7 @@ fun AddQuoteBottomSheet(
             singleLine = true,
             value = reference,
             label = { Text("Reference") },
-            onValueChange = {
-                reference = it
-                if (it.isNotBlank()) isReferenceError = false
-            },
+            onValueChange = { viewModel.updateReference(it) },
             isError = isReferenceError,
             supportingText = {
                 if (isReferenceError) {
@@ -495,10 +486,7 @@ fun AddQuoteBottomSheet(
             singleLine = true,
             value = subject,
             label = { Text("Subject") },
-            onValueChange = {
-                subject = it
-                if (it.isNotBlank()) isSubjectError = false
-            },
+            onValueChange = { viewModel.updateSubject(it) },
             isError = isSubjectError,
             supportingText = {
                 if (isSubjectError) {
@@ -511,24 +499,8 @@ fun AddQuoteBottomSheet(
         )
         Button(
             onClick = {
-                quoteText = quoteText.trim()
-                author = author.trim()
-                reference = reference.trim()
-                subject = subject.trim()
-
-                isQuoteError = quoteText.isBlank()
-                isAuthorError = author.isBlank()
-                isReferenceError = reference.isBlank()
-                isSubjectError = subject.isBlank()
-
-                if (!isQuoteError && !isAuthorError && !isReferenceError && !isSubjectError) {
-                    timeStamp = System.currentTimeMillis()
-                    onQuoteAdded(Quote(null, quoteText, author, reference, subject, timeStamp))
-                    quoteText = ""
-                    author = ""
-                    reference = ""
-                    subject = ""
-                    timeStamp = 0
+                viewModel.validateAndGetQuote()?.let {
+                    onQuoteAdded(it)
                 }
             },
             modifier = Modifier
@@ -542,14 +514,25 @@ fun AddQuoteBottomSheet(
 
 @Composable
 fun EditQuoteBottomSheet(
+    viewModel: QuotesViewModel,
     onQuoteEdited: (Quote) -> Unit,
     quote: Quote?
 ) {
-    var quoteText by remember { mutableStateOf(quote!!.quote) }
-    var author by remember { mutableStateOf(quote!!.author) }
-    var reference by remember { mutableStateOf(quote!!.reference) }
-    var subject by remember { mutableStateOf(quote!!.subject) }
-    var timeStamp by remember { mutableLongStateOf(quote!!.timestamp) }
+    val quoteText by viewModel.quoteText.collectAsStateWithLifecycle()
+    val author by viewModel.author.collectAsStateWithLifecycle()
+    val reference by viewModel.reference.collectAsStateWithLifecycle()
+    val subject by viewModel.subject.collectAsStateWithLifecycle()
+
+    val isQuoteError by viewModel.isQuoteError.collectAsStateWithLifecycle()
+    val isAuthorError by viewModel.isAuthorError.collectAsStateWithLifecycle()
+    val isReferenceError by viewModel.isReferenceError.collectAsStateWithLifecycle()
+    val isSubjectError by viewModel.isSubjectError.collectAsStateWithLifecycle()
+
+    // Initialize form with quote data if it's the first time
+    remember(quote) {
+        quote?.let { viewModel.loadQuote(it) }
+        true
+    }
 
     Column(
         modifier = Modifier
@@ -560,11 +543,6 @@ fun EditQuoteBottomSheet(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        var isQuoteError by remember { mutableStateOf(false) }
-        var isAuthorError by remember { mutableStateOf(false) }
-        var isReferenceError by remember { mutableStateOf(false) }
-        var isSubjectError by remember { mutableStateOf(false) }
-
         Text("Edit Quote", style = MaterialTheme.typography.titleLarge)
         OutlinedTextField(
             modifier = Modifier
@@ -574,10 +552,7 @@ fun EditQuoteBottomSheet(
             minLines = 3,
             value = quoteText,
             label = { Text("Quote") },
-            onValueChange = {
-                quoteText = it
-                if (it.isNotBlank()) isQuoteError = false // Clear error when typing
-            },
+            onValueChange = { viewModel.updateQuoteText(it) },
             isError = isQuoteError,
             supportingText = {
                 if (isQuoteError) {
@@ -596,10 +571,7 @@ fun EditQuoteBottomSheet(
             singleLine = true,
             value = author,
             label = { Text("Author") },
-            onValueChange = {
-                author = it
-                if (it.isNotBlank()) isAuthorError = false
-            },
+            onValueChange = { viewModel.updateAuthor(it) },
             isError = isAuthorError,
             supportingText = {
                 if (isAuthorError) {
@@ -618,10 +590,7 @@ fun EditQuoteBottomSheet(
             singleLine = true,
             value = reference,
             label = { Text("Reference") },
-            onValueChange = {
-                reference = it
-                if (it.isNotBlank()) isReferenceError = false
-            },
+            onValueChange = { viewModel.updateReference(it) },
             isError = isReferenceError,
             supportingText = {
                 if (isReferenceError) {
@@ -640,10 +609,7 @@ fun EditQuoteBottomSheet(
             singleLine = true,
             value = subject,
             label = { Text("Subject") },
-            onValueChange = {
-                subject = it
-                if (it.isNotBlank()) isSubjectError = false
-            },
+            onValueChange = { viewModel.updateSubject(it) },
             isError = isSubjectError,
             supportingText = {
                 if (isSubjectError) {
@@ -656,28 +622,8 @@ fun EditQuoteBottomSheet(
         )
         Button(
             onClick = {
-                isQuoteError = quoteText.isBlank()
-                isAuthorError = author.isBlank()
-                isReferenceError = reference.isBlank()
-                isSubjectError = subject.isBlank()
-
-                if (!isQuoteError && !isAuthorError && !isReferenceError && !isSubjectError) {
-                    timeStamp = System.currentTimeMillis()
-                    onQuoteEdited(
-                        Quote(
-                            quote!!.id,
-                            quoteText,
-                            author,
-                            reference,
-                            subject,
-                            timeStamp
-                        )
-                    )
-                    quoteText = ""
-                    author = ""
-                    reference = ""
-                    subject = ""
-                    timeStamp = 0
+                viewModel.validateAndGetQuote(quote?.id)?.let {
+                    onQuoteEdited(it)
                 }
             },
             modifier = Modifier

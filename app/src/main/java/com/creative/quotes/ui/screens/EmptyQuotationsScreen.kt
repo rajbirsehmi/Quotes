@@ -101,19 +101,25 @@ fun EmptyQuotationsScreen(
         }
         if (showBottomSheet) {
             ModalBottomSheet(
-                onDismissRequest = { showBottomSheet = false },
+                onDismissRequest = { 
+                    showBottomSheet = false 
+                    viewModel.resetForm()
+                },
                 sheetState = sheetState,
                 dragHandle = null
             ) {
-                AddQuoteBottomSheet(onQuoteAdded = {
-                    viewModel.addQuote(it)
-                    focusManager.clearFocus()
-                    scope.launch {
-                        sheetState.hide()
-                    }.invokeOnCompletion {
-                        showBottomSheet = false
+                AddQuoteBottomSheet(
+                    viewModel = viewModel,
+                    onQuoteAdded = {
+                        viewModel.addQuote(it)
+                        focusManager.clearFocus()
+                        scope.launch {
+                            sheetState.hide()
+                        }.invokeOnCompletion {
+                            showBottomSheet = false
+                        }
                     }
-                })
+                )
             }
         }
     }
