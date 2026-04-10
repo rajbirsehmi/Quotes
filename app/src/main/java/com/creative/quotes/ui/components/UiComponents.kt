@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -18,21 +21,31 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FormatQuote
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -44,6 +57,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -55,40 +70,65 @@ fun QuotationCard(
     quote: Quote,
     onQuoteClick: (Int) -> Unit
 ) {
-    Column(
+    ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable { onQuoteClick(quote.id ?: 0) }
-            .testTag("quote_card")
-    ) {
-        Text(
-            text = quote.quote,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
-                .padding(16.dp, 12.dp, 16.dp, 12.dp)
-                .fillMaxWidth()
-                .testTag("quote_text")
+            .testTag("quote_card"),
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface
         )
-        Row(
+    ) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp, 0.dp, 16.dp, 16.dp),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(20.dp)
         ) {
-            Text(
-                modifier = Modifier.testTag("quote_author"),
-                text = "-- ${quote.author}, ",
-                style = MaterialTheme.typography.bodyMedium,
-                minLines = 1
+            Icon(
+                imageVector = Icons.Default.FormatQuote,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                modifier = Modifier.size(32.dp)
             )
             Text(
-                modifier = Modifier.testTag("quote_reference"),
-                text = quote.reference,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.secondary,
-                minLines = 1
+                text = quote.quote,
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Light,
+                    fontStyle = FontStyle.Italic
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .testTag("quote_text")
             )
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 12.dp),
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        modifier = Modifier.testTag("quote_author"),
+                        text = quote.author,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    if (quote.reference.isNotEmpty()) {
+                        Text(
+                            modifier = Modifier.testTag("quote_reference"),
+                            text = quote.reference,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -154,28 +194,33 @@ fun SubjectCard(
     subject: String,
     onSubjectClick: (subject: String) -> Unit
 ) {
-    Row(
+    OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-//            .padding(4.dp)
+            .padding(horizontal = 16.dp, vertical = 6.dp)
             .clickable { onSubjectClick(subject) },
-        verticalAlignment = Alignment.CenterVertically
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
+        ),
+        shape = MaterialTheme.shapes.large
     ) {
-        Text(
-            text = subject,
-            style = MaterialTheme.typography.titleLarge,
+        Row(
             modifier = Modifier
-                .padding(16.dp, 12.dp, 16.dp, 12.dp)
-        )
-        Spacer(
-            modifier = Modifier.weight(1.0f)
-        )
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = "Open Subject",
-            modifier = Modifier
-                .padding(16.dp, 12.dp, 16.dp, 12.dp)
-        )
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = subject,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f)
+            )
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = "Open Subject",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 }
 
@@ -212,26 +257,76 @@ fun QuotationDetails(
     Column(
         modifier
             .fillMaxSize()
-            .padding(24.dp)
+            .padding(28.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         quote?.let {
+            Icon(
+                imageVector = Icons.Default.FormatQuote,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                modifier = Modifier
+                    .size(80.dp)
+                    .padding(bottom = 16.dp)
+            )
             Text(
                 text = it.quote,
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.Light,
+                    fontStyle = FontStyle.Italic,
+                    lineHeight = MaterialTheme.typography.headlineLarge.lineHeight * 1.2f
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("quote_text"),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
-            Row(
+            HorizontalDivider(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
+                    .padding(vertical = 32.dp)
+                    .width(64.dp),
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+            )
+            Text(
+                modifier = Modifier.testTag("quote_author"),
+                text = it.author,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.secondary,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+            if (it.reference.isNotEmpty()) {
                 Text(
-                    modifier = Modifier.testTag("quote_author"),
-                    text = "— ${it.author}",
-                    style = MaterialTheme.typography.bodyLarge
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .testTag("quote_reference"),
+                    text = it.reference,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
+            }
+            if (it.subject.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(24.dp))
+                OutlinedCard(
+                    shape = MaterialTheme.shapes.small,
+                    colors = CardDefaults.outlinedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                    ),
+                    border = androidx.compose.foundation.BorderStroke(
+                        width = 0.5.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant
+                    )
+                ) {
+                    Text(
+                        text = it.subject,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
     }
@@ -267,28 +362,47 @@ fun TopAppBarAllQuotes(
     var showMenu by remember { mutableStateOf(false) }
     CenterAlignedTopAppBar(
         title = {
-            Text("Quotations")
+            Text(
+                "Quotations",
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
         },
+        colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+        ),
         actions = {
             IconButton(onClick = onAddClick) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Quotation..."
+                    contentDescription = "Add Quotation...",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
             Box {
                 IconButton(onClick = { showMenu = true }) {
                     Icon(
                         imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings"
+                        contentDescription = "Settings",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 DropdownMenu(
                     expanded = showMenu,
-                    onDismissRequest = { showMenu = false }
+                    onDismissRequest = { showMenu = false },
+                    shape = MaterialTheme.shapes.large
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Create Backup") },
+                        text = { 
+                            Text(
+                                "Create Backup",
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    fontWeight = FontWeight.Medium
+                                )
+                            ) 
+                        },
                         onClick = {
                             onCreateBackup()
                             showMenu = false
@@ -296,12 +410,22 @@ fun TopAppBarAllQuotes(
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Share,
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
                     DropdownMenuItem(
-                        text = { Text("Restore Backup") },
+                        text = { 
+                            Text(
+                                "Restore Backup",
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    fontWeight = FontWeight.Medium
+                                )
+                            ) 
+                        },
                         onClick = {
                             onRestoreBackup()
                             showMenu = false
@@ -309,7 +433,9 @@ fun TopAppBarAllQuotes(
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     )
@@ -325,40 +451,101 @@ fun TopAppBarQuotesContent(
     quote: Quote?,
     onBack: () -> Unit,
     onDelete: (Quote) -> Unit,
-    onEdit: (Quote) -> Unit
+    onEdit: (Quote) -> Unit,
+    onShare: (Quote) -> Unit
 ) {
+    var showMenu by remember { mutableStateOf(false) }
     CenterAlignedTopAppBar(
         title = {
-            Text("Quotation Details")
+            Text(
+                "Quotation Details",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
         },
+        colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back to quotations"
+                    contentDescription = "Back to quotations",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         },
         actions = {
             IconButton(onClick = {
-                quote?.let {
-                    onEdit(it)
-                }
+                quote?.let { onShare(it) }
             }) {
                 Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit Quotation..."
+                    imageVector = Icons.Default.Share,
+                    contentDescription = "Share Quotation",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
-            IconButton(onClick = {
-                quote?.let {
-                    onDelete(it)
+            Box {
+                IconButton(onClick = { showMenu = true }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "More options",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Quotation..."
-                )
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false },
+                    shape = MaterialTheme.shapes.large
+                ) {
+                    DropdownMenuItem(
+                        text = { 
+                            Text(
+                                "Edit",
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    fontWeight = FontWeight.Medium
+                                )
+                            ) 
+                        },
+                        onClick = {
+                            quote?.let { onEdit(it) }
+                            showMenu = false
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                    DropdownMenuItem(
+                        text = { 
+                            Text(
+                                "Delete",
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    fontWeight = FontWeight.Medium
+                                ),
+                                color = MaterialTheme.colorScheme.error
+                            ) 
+                        },
+                        onClick = {
+                            quote?.let { onDelete(it) }
+                            showMenu = false
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    )
+                }
             }
         }
     )
@@ -373,13 +560,23 @@ fun TopBarQuotesBySubject(
 ) {
     CenterAlignedTopAppBar(
         title = {
-            Text(subject)
+            Text(
+                subject,
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
         },
+        colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+        ),
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back to Subjects"
+                    contentDescription = "Back to Subjects",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         },
@@ -389,7 +586,8 @@ fun TopBarQuotesBySubject(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Quotation..."
+                    contentDescription = "Add Quotation...",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -413,24 +611,32 @@ fun AddQuoteBottomSheet(
 
     Column(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(24.dp)
             .navigationBarsPadding()
             .statusBarsPadding()
-            .fillMaxSize()
+            .fillMaxWidth()
             .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Add New Quote", style = MaterialTheme.typography.titleLarge)
+        Text(
+            "Add New Quote",
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        )
+        
         OutlinedTextField(
             modifier = Modifier
-                .padding(top = 4.dp)
                 .fillMaxWidth()
                 .testTag("quote_input"),
             minLines = 3,
             value = quoteText,
-            label = { Text("Quote") },
+            label = { Text("Quote Content") },
             onValueChange = { viewModel.updateQuoteText(it) },
             isError = isQuoteError,
+            shape = MaterialTheme.shapes.medium,
             supportingText = {
                 if (isQuoteError) {
                     Text(
@@ -438,65 +644,77 @@ fun AddQuoteBottomSheet(
                         color = MaterialTheme.colorScheme.error
                     )
                 }
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.FormatQuote,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                )
             }
         )
-        OutlinedTextField(
-            modifier = Modifier
-                .padding(top = 4.dp)
-                .fillMaxWidth()
-                .testTag("author_input"),
-            singleLine = true,
-            value = author,
-            label = { Text("Author") },
-            onValueChange = { viewModel.updateAuthor(it) },
-            isError = isAuthorError,
-            supportingText = {
-                if (isAuthorError) {
-                    Text(
-                        text = "Author cannot be empty",
-                        color = MaterialTheme.colorScheme.error
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("author_input"),
+                singleLine = true,
+                value = author,
+                label = { Text("Author") },
+                onValueChange = { viewModel.updateAuthor(it) },
+                isError = isAuthorError,
+                shape = MaterialTheme.shapes.medium,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
-            }
-        )
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("subject_input"),
+                singleLine = true,
+                value = subject,
+                label = { Text("Subject") },
+                onValueChange = { viewModel.updateSubject(it) },
+                isError = isSubjectError,
+                shape = MaterialTheme.shapes.medium,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Label,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            )
+        }
+
         OutlinedTextField(
             modifier = Modifier
-                .padding(top = 4.dp)
                 .fillMaxWidth()
                 .testTag("reference_input"),
             singleLine = true,
             value = reference,
-            label = { Text("Reference") },
+            label = { Text("Reference (Book, Speech, etc.)") },
             onValueChange = { viewModel.updateReference(it) },
             isError = isReferenceError,
-            supportingText = {
-                if (isReferenceError) {
-                    Text(
-                        text = "Reference cannot be empty",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
+            shape = MaterialTheme.shapes.medium,
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Book,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
             }
         )
-        OutlinedTextField(
-            modifier = Modifier
-                .padding(top = 4.dp)
-                .fillMaxWidth()
-                .testTag("subject_input"),
-            singleLine = true,
-            value = subject,
-            label = { Text("Subject") },
-            onValueChange = { viewModel.updateSubject(it) },
-            isError = isSubjectError,
-            supportingText = {
-                if (isSubjectError) {
-                    Text(
-                        text = "Subject cannot be empty",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-        )
+
         Button(
             onClick = {
                 viewModel.validateAndGetQuote()?.let {
@@ -504,10 +722,14 @@ fun AddQuoteBottomSheet(
                 }
             },
             modifier = Modifier
-                .padding(top = 16.dp)
+                .padding(top = 8.dp)
                 .fillMaxWidth()
+                .height(56.dp),
+            shape = MaterialTheme.shapes.large
         ) {
-            Text("Save Quote")
+            Icon(Icons.Default.Save, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text("Save Quote", style = MaterialTheme.typography.titleMedium)
         }
     }
 }
@@ -536,24 +758,32 @@ fun EditQuoteBottomSheet(
 
     Column(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(24.dp)
             .navigationBarsPadding()
             .statusBarsPadding()
-            .fillMaxSize()
+            .fillMaxWidth()
             .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Edit Quote", style = MaterialTheme.typography.titleLarge)
+        Text(
+            "Edit Quote",
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        )
+        
         OutlinedTextField(
             modifier = Modifier
-                .padding(top = 4.dp)
                 .fillMaxWidth()
                 .testTag("quote_input"),
             minLines = 3,
             value = quoteText,
-            label = { Text("Quote") },
+            label = { Text("Quote Content") },
             onValueChange = { viewModel.updateQuoteText(it) },
             isError = isQuoteError,
+            shape = MaterialTheme.shapes.medium,
             supportingText = {
                 if (isQuoteError) {
                     Text(
@@ -561,30 +791,60 @@ fun EditQuoteBottomSheet(
                         color = MaterialTheme.colorScheme.error
                     )
                 }
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.FormatQuote,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                )
             }
         )
-        OutlinedTextField(
-            modifier = Modifier
-                .padding(top = 4.dp)
-                .fillMaxWidth()
-                .testTag("author_input"),
-            singleLine = true,
-            value = author,
-            label = { Text("Author") },
-            onValueChange = { viewModel.updateAuthor(it) },
-            isError = isAuthorError,
-            supportingText = {
-                if (isAuthorError) {
-                    Text(
-                        text = "Author cannot be empty",
-                        color = MaterialTheme.colorScheme.error
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("author_input"),
+                singleLine = true,
+                value = author,
+                label = { Text("Author") },
+                onValueChange = { viewModel.updateAuthor(it) },
+                isError = isAuthorError,
+                shape = MaterialTheme.shapes.medium,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
-            }
-        )
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("subject_input"),
+                singleLine = true,
+                value = subject,
+                label = { Text("Subject") },
+                onValueChange = { viewModel.updateSubject(it) },
+                isError = isSubjectError,
+                shape = MaterialTheme.shapes.medium,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Label,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            )
+        }
+
         OutlinedTextField(
             modifier = Modifier
-                .padding(top = 4.dp)
                 .fillMaxWidth()
                 .testTag("reference_input"),
             singleLine = true,
@@ -592,34 +852,16 @@ fun EditQuoteBottomSheet(
             label = { Text("Reference") },
             onValueChange = { viewModel.updateReference(it) },
             isError = isReferenceError,
-            supportingText = {
-                if (isReferenceError) {
-                    Text(
-                        text = "Reference cannot be empty",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
+            shape = MaterialTheme.shapes.medium,
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Book,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
             }
         )
-        OutlinedTextField(
-            modifier = Modifier
-                .padding(top = 4.dp)
-                .fillMaxWidth()
-                .testTag("subject_input"),
-            singleLine = true,
-            value = subject,
-            label = { Text("Subject") },
-            onValueChange = { viewModel.updateSubject(it) },
-            isError = isSubjectError,
-            supportingText = {
-                if (isSubjectError) {
-                    Text(
-                        text = "Subject cannot be empty",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-        )
+
         Button(
             onClick = {
                 viewModel.validateAndGetQuote(quote?.id)?.let {
@@ -627,10 +869,14 @@ fun EditQuoteBottomSheet(
                 }
             },
             modifier = Modifier
-                .padding(top = 16.dp)
+                .padding(top = 8.dp)
                 .fillMaxWidth()
+                .height(56.dp),
+            shape = MaterialTheme.shapes.large
         ) {
-            Text("Update Quote")
+            Icon(Icons.Default.Save, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text("Update Quote", style = MaterialTheme.typography.titleMedium)
         }
     }
 }
