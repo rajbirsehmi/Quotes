@@ -599,15 +599,7 @@ fun AddQuoteBottomSheet(
     viewModel: QuotesViewModel,
     onQuoteAdded: (Quote) -> Unit
 ) {
-    val quoteText by viewModel.quoteText.collectAsStateWithLifecycle()
-    val author by viewModel.author.collectAsStateWithLifecycle()
-    val reference by viewModel.reference.collectAsStateWithLifecycle()
-    val subject by viewModel.subject.collectAsStateWithLifecycle()
-
-    val isQuoteError by viewModel.isQuoteError.collectAsStateWithLifecycle()
-    val isAuthorError by viewModel.isAuthorError.collectAsStateWithLifecycle()
-    val isReferenceError by viewModel.isReferenceError.collectAsStateWithLifecycle()
-    val isSubjectError by viewModel.isSubjectError.collectAsStateWithLifecycle()
+    val formState by viewModel.formState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -632,13 +624,13 @@ fun AddQuoteBottomSheet(
                 .fillMaxWidth()
                 .testTag("quote_input"),
             minLines = 3,
-            value = quoteText,
+            value = formState.quoteText,
             label = { Text("Quote Content") },
             onValueChange = { viewModel.updateQuoteText(it) },
-            isError = isQuoteError,
+            isError = formState.isQuoteError,
             shape = MaterialTheme.shapes.medium,
             supportingText = {
-                if (isQuoteError) {
+                if (formState.isQuoteError) {
                     Text(
                         text = "Quote cannot be empty",
                         color = MaterialTheme.colorScheme.error
@@ -663,10 +655,10 @@ fun AddQuoteBottomSheet(
                     .weight(1f)
                     .testTag("author_input"),
                 singleLine = true,
-                value = author,
+                value = formState.author,
                 label = { Text("Author") },
                 onValueChange = { viewModel.updateAuthor(it) },
-                isError = isAuthorError,
+                isError = formState.isAuthorError,
                 shape = MaterialTheme.shapes.medium,
                 leadingIcon = {
                     Icon(
@@ -681,10 +673,10 @@ fun AddQuoteBottomSheet(
                     .weight(1f)
                     .testTag("subject_input"),
                 singleLine = true,
-                value = subject,
+                value = formState.subject,
                 label = { Text("Subject") },
                 onValueChange = { viewModel.updateSubject(it) },
-                isError = isSubjectError,
+                isError = formState.isSubjectError,
                 shape = MaterialTheme.shapes.medium,
                 leadingIcon = {
                     Icon(
@@ -701,10 +693,10 @@ fun AddQuoteBottomSheet(
                 .fillMaxWidth()
                 .testTag("reference_input"),
             singleLine = true,
-            value = reference,
+            value = formState.reference,
             label = { Text("Reference (Book, Speech, etc.)") },
             onValueChange = { viewModel.updateReference(it) },
-            isError = isReferenceError,
+            isError = formState.isReferenceError,
             shape = MaterialTheme.shapes.medium,
             leadingIcon = {
                 Icon(
@@ -740,15 +732,7 @@ fun EditQuoteBottomSheet(
     onQuoteEdited: (Quote) -> Unit,
     quote: Quote?
 ) {
-    val quoteText by viewModel.quoteText.collectAsStateWithLifecycle()
-    val author by viewModel.author.collectAsStateWithLifecycle()
-    val reference by viewModel.reference.collectAsStateWithLifecycle()
-    val subject by viewModel.subject.collectAsStateWithLifecycle()
-
-    val isQuoteError by viewModel.isQuoteError.collectAsStateWithLifecycle()
-    val isAuthorError by viewModel.isAuthorError.collectAsStateWithLifecycle()
-    val isReferenceError by viewModel.isReferenceError.collectAsStateWithLifecycle()
-    val isSubjectError by viewModel.isSubjectError.collectAsStateWithLifecycle()
+    val formState by viewModel.formState.collectAsStateWithLifecycle()
 
     // Initialize form with quote data if it's the first time
     remember(quote) {
@@ -779,13 +763,13 @@ fun EditQuoteBottomSheet(
                 .fillMaxWidth()
                 .testTag("quote_input"),
             minLines = 3,
-            value = quoteText,
+            value = formState.quoteText,
             label = { Text("Quote Content") },
             onValueChange = { viewModel.updateQuoteText(it) },
-            isError = isQuoteError,
+            isError = formState.isQuoteError,
             shape = MaterialTheme.shapes.medium,
             supportingText = {
-                if (isQuoteError) {
+                if (formState.isQuoteError) {
                     Text(
                         text = "Quote cannot be empty",
                         color = MaterialTheme.colorScheme.error
@@ -810,10 +794,10 @@ fun EditQuoteBottomSheet(
                     .weight(1f)
                     .testTag("author_input"),
                 singleLine = true,
-                value = author,
+                value = formState.author,
                 label = { Text("Author") },
                 onValueChange = { viewModel.updateAuthor(it) },
-                isError = isAuthorError,
+                isError = formState.isAuthorError,
                 shape = MaterialTheme.shapes.medium,
                 leadingIcon = {
                     Icon(
@@ -828,10 +812,10 @@ fun EditQuoteBottomSheet(
                     .weight(1f)
                     .testTag("subject_input"),
                 singleLine = true,
-                value = subject,
+                value = formState.subject,
                 label = { Text("Subject") },
                 onValueChange = { viewModel.updateSubject(it) },
-                isError = isSubjectError,
+                isError = formState.isSubjectError,
                 shape = MaterialTheme.shapes.medium,
                 leadingIcon = {
                     Icon(
@@ -848,10 +832,10 @@ fun EditQuoteBottomSheet(
                 .fillMaxWidth()
                 .testTag("reference_input"),
             singleLine = true,
-            value = reference,
+            value = formState.reference,
             label = { Text("Reference") },
             onValueChange = { viewModel.updateReference(it) },
-            isError = isReferenceError,
+            isError = formState.isReferenceError,
             shape = MaterialTheme.shapes.medium,
             leadingIcon = {
                 Icon(

@@ -1,11 +1,17 @@
 package com.creative.quotes.data.local
 
-import android.provider.SyncStateContract
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.creative.quotes.util.QUOTES_ENTITY_NAME
 
-@Entity(tableName = QUOTES_ENTITY_NAME)
+@Entity(
+    tableName = QUOTES_ENTITY_NAME,
+    indices = [
+        Index(value = ["subject"]),
+        Index(value = ["author"])
+    ]
+)
 data class QuoteEntity(
 
     @PrimaryKey(autoGenerate = true) val id: Int? = null,

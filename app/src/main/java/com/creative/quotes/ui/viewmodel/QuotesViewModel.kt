@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,19 +31,21 @@ class QuotesViewModel @Inject constructor(
     }
 
     private val subjectsFlow = quotesRepository.getAllSubjects()
+    private val allQuotesFlow = quotesRepository.getAllQuotes()
 
     private val quotesBySubjectFlow = _selectedSubject.flatMapLatest { subject ->
-        quotesRepository.getAllQuotesBySubject(subject)
+        if (subject.isEmpty()) allQuotesFlow else quotesRepository.getAllQuotesBySubject(subject)
     }
 
     val uiState: StateFlow<QuotesUiState> = combine(
-        quotesBySubjectFlow,
-        subjectsFlow
-    ) { quotes, subjects ->
+        allQuotesFlow,
+        subjectsFlow,
+        quotesBySubjectFlow
+    ) { allQuotes, subjects, quotesBySub ->
         QuotesUiState(
-            quotes = quotes,
+            quotes = allQuotes,
             subjects = subjects,
-            quotesBySubject = quotes,
+            quotesBySubject = quotesBySub,
             isLoading = false
         )
     }.stateIn(
@@ -51,82 +54,62 @@ class QuotesViewModel @Inject constructor(
         initialValue = QuotesUiState(isLoading = true)
     )
 
-    // Form State
-    private val _quoteText = MutableStateFlow("")
-    val quoteText = _quoteText.asStateFlow()
-
-    private val _author = MutableStateFlow("")
-    val author = _author.asStateFlow()
-
-    private val _reference = MutableStateFlow("")
-    val reference = _reference.asStateFlow()
-
-    private val _subject = MutableStateFlow("")
-    val subject = _subject.asStateFlow()
-
-    private val _isQuoteError = MutableStateFlow(false)
-    val isQuoteError = _isQuoteError.asStateFlow()
-
-    private val _isAuthorError = MutableStateFlow(false)
-    val isAuthorError = _isAuthorError.asStateFlow()
-
-    private val _isReferenceError = MutableStateFlow(false)
-    val isReferenceError = _isReferenceError.asStateFlow()
-
-    private val _isSubjectError = MutableStateFlow(false)
-    val isSubjectError = _isSubjectError.asStateFlow()
+    // Consolidated Form State
+    private val _formState = MutableStateFlow(QuoteFormState())
+    val formState = _formState.asStateFlow()
 
     fun updateQuoteText(text: String) {
-        _quoteText.value = text
-        if (text.isNotBlank()) _isQuoteError.value = false
+        _formState.update { it.copy(quoteText = text, isQuoteError = text.isBlank()) }
     }
 
     fun updateAuthor(author: String) {
-        _author.value = author
-        if (author.isNotBlank()) _isAuthorError.value = false
+        _formState.update { it.copy(author = author, isAuthorError = author.isBlank()) }
     }
 
     fun updateReference(reference: String) {
-        _reference.value = reference
-        if (reference.isNotBlank()) _isReferenceError.value = false
+        _formState.update { it.copy(reference = reference, isReferenceError = reference.isBlank()) }
     }
 
     fun updateSubject(subject: String) {
-        _subject.value = subject
-        if (subject.isNotBlank()) _isSubjectError.value = false
+        _formState.update { it.copy(subject = subject, isSubjectError = subject.isBlank()) }
     }
 
     fun resetForm() {
-        _quoteText.value = ""
-        _author.value = ""
-        _reference.value = ""
-        _subject.value = ""
-        _isQuoteError.value = false
-        _isAuthorError.value = false
-        _isReferenceError.value = false
-        _isSubjectError.value = false
+        _formState.value = QuoteFormState()
     }
 
     fun loadQuote(quote: Quote) {
-        _quoteText.value = quote.quote
-        _author.value = quote.author
-        _reference.value = quote.reference
-        _subject.value = quote.subject
+        _formState.value = QuoteFormState(
+            quoteText = quote.quote,
+            author = quote.author,
+            reference = quote.reference,
+            subject = quote.subject
+        )
     }
 
     fun validateAndGetQuote(id: Int? = null): Quote? {
-        val q = _quoteText.value.trim()
-        val a = _author.value.trim()
-        val r = _reference.value.trim()
-        val s = _subject.value.trim()
+        val s = _formState.value
+        val q = s.quoteText.trim()
+        val a = s.author.trim()
+        val r = s.reference.trim()
+        val sub = s.subject.trim()
 
-        _isQuoteError.value = q.isBlank()
-        _isAuthorError.value = a.isBlank()
-        _isReferenceError.value = r.isBlank()
-        _isSubjectError.value = s.isBlank()
+        val isQError = q.isBlank()
+        val isAError = a.isBlank()
+        val isRError = r.isBlank()
+        val isSubError = sub.isBlank()
 
-        return if (!_isQuoteError.value && !_isAuthorError.value && !_isReferenceError.value && !_isSubjectError.value) {
-            Quote(id, q, a, r, s, System.currentTimeMillis())
+        _formState.update { 
+            it.copy(
+                isQuoteError = isQError,
+                isAuthorError = isAError,
+                isReferenceError = isRError,
+                isSubjectError = isSubError
+            )
+        }
+
+        return if (!isQError && !isAError && !isRError && !isSubError) {
+            Quote(id, q, a, r, sub, System.currentTimeMillis())
         } else {
             null
         }
