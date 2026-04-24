@@ -90,4 +90,16 @@ dependencies {
     // Hilt Testing
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.android.compiler)
+
+    androidTestImplementation(libs.androidx.junit.v115)
+    androidTestImplementation(libs.androidx.espresso.core.v351)
+
+    // For Compose UI testing (since you're using Compose)
+    androidTestImplementation(platform(libs.androidx.compose.bom.v20260401))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Optional: Room testing (to verify QuoteDao data in isolation)
+    androidTestImplementation(libs.androidx.room.testing)
 }
