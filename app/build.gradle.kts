@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.creative.quotes"
-        minSdk = 33
+        minSdk = 30
         targetSdk = 36
         versionCode = 4
         versionName = "1.2"
@@ -24,7 +24,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -73,7 +73,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    
+
     // Fix for ClassNotFoundException: ActivityInvoker
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.core.ktx)
