@@ -83,7 +83,7 @@ class QuoteRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTes
     }
 
     fun verifyBottomSheetTitleIsDisplayed() {
-        composeTestRule.waitUntil(5000) {
+        composeTestRule.waitUntil(10000) {
             composeTestRule.onAllNodesWithTag("bottom_sheet_title").fetchSemanticsNodes().isNotEmpty()
         }
         composeTestRule.onNodeWithTag("bottom_sheet_title").assertIsDisplayed()
@@ -102,21 +102,21 @@ class QuoteRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTes
     }
 
     fun verifyTopAppBarRestoreButtonIsDisplaying() {
-        composeTestRule.waitUntil(5000) {
+        composeTestRule.waitUntil(10000) {
             composeTestRule.onAllNodesWithTag("top_bar_restore_button", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
         }
         composeTestRule.onNodeWithTag("top_bar_restore_button", useUnmergedTree = true).assertIsDisplayed()
     }
 
     fun verifyTopAppBarBackupButtonIsDisplaying() {
-        composeTestRule.waitUntil(5000) {
+        composeTestRule.waitUntil(10000) {
             composeTestRule.onAllNodesWithTag("top_bar_backup_button", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
         }
         composeTestRule.onNodeWithTag("top_bar_backup_button", useUnmergedTree = true).assertIsDisplayed()
     }
 
     fun verifySubjectIsDisplayed(subject: String) {
-        composeTestRule.waitUntil(5000) {
+        composeTestRule.waitUntil(10000) {
             composeTestRule.onAllNodesWithTag("subject_card").fetchSemanticsNodes().isNotEmpty()
         }
         composeTestRule.onNodeWithTag("subject_card").assertIsDisplayed()

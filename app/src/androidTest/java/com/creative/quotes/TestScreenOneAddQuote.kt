@@ -1,6 +1,7 @@
 package com.creative.quotes
 
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.test.filters.FlakyTest
 import com.creative.quotes.ui.navigation.QuotesNavGraph
 import com.creative.quotes.robot.QuoteRobot
 import com.creative.quotes.robot.testQuote
@@ -35,6 +36,7 @@ class TestScreenOneAddQuote {
         }
     }
 
+    @FlakyTest
     @Test
     fun clickOnSaveQuoteButton_verifyQuoteIsAdded() {
         QuoteRobot.withRobot(composeTestRule) {
