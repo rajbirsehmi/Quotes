@@ -106,4 +106,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ui-test-reports
-          path: app/build/reports/androidTests/connected/**
+          path: app/build/reports/androidTests/connected/
