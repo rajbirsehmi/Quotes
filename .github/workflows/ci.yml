@@ -4,17 +4,17 @@ on:
   push:
     branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main", "develop" ]
+    branches: [ "main" ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  static-analysis-and-unit-tests:
+  verification:
     name: Lint & Unit Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -24,27 +24,23 @@ jobs:
         with:
           java-version: "17"
           distribution: 'temurin'
-          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Grant permission for Gradlew
         run: chmod +x gradlew
 
-      - name: Run Ktlint Check
-        run: ./gradlew ktlintCheck
-
-      - name: Run Lint
-        run: ./gradlew lintDebug
-
-      - name: Run Unit Tests
-        run: ./gradlew testDebugUnitTest
+      - name: Run Quality Checks & Unit Tests
+        run: ./gradlew ktlintCheck lintDebug testDebugUnitTest --parallel --build-cache
 
       - name: Upload Test Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-reports
+          name: test-reports
           path: |
-            app/build/reports/tests/testDebugUnitTest/
+            app/build/reports/tests/
             app/build/reports/lint-results-debug.html
 
   build:
@@ -60,13 +56,15 @@ jobs:
         with:
           java-version: "17"
           distribution: 'temurin'
-          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Grant permission for Gradlew
         run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --build-cache
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -76,7 +74,7 @@ jobs:
 
   ui-tests:
     name: UI Tests (Emulator)
-    needs: [static-analysis-and-unit-tests, build]
+    needs: [verification, build]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -88,7 +86,9 @@ jobs:
         with:
           java-version: "17"
           distribution: 'temurin'
-          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Grant permission for Gradlew
         run: chmod +x gradlew
@@ -108,7 +108,7 @@ jobs:
           force-avd-creation: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none -no-metrics -memory 2048
           disable-animations: true
-          script: ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.notAnnotation=androidx.test.filters.FlakyTest --info
+          script: ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.notAnnotation=androidx.test.filters.FlakyTest --build-cache --info
 
       - name: Upload UI Test Reports
         if: always()
