@@ -2,6 +2,7 @@ package com.creative.quotes.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -19,6 +20,7 @@ import com.creative.quotes.ui.viewmodel.QuotesViewModel
 
 @Composable
 fun QuotesNavGraph(
+    modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     viewModel: QuotesViewModel = hiltViewModel()
 ) {
@@ -32,7 +34,8 @@ fun QuotesNavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        modifier = modifier
     ) {
         composable(route = Screen.AllQuotationsScreen.route) {
             AllQuotationsScreen(
