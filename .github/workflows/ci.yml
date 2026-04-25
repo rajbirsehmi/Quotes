@@ -90,14 +90,17 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
+      - name: Grant permission for Gradlew
+        run: chmod +x gradlew
+
       - name: Run UI Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
           target: google_apis
           arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          force-avd-creation: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none -no-metrics
           disable-animations: true
           script: ./gradlew connectedCheck
 
