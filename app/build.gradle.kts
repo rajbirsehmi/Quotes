@@ -67,6 +67,10 @@ dependencies {
 
     // --- TESTING ---
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.turbine)
 
     // Instrumented Tests (Android)
     androidTestImplementation(libs.androidx.junit)

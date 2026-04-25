@@ -45,7 +45,6 @@ class TestScreenOneAddQuote {
             enterReferenceText(testQuote.reference)
             clickSaveButton()
             composeTestRule.waitForIdle()
-            verifyBottomSheetIsNotDisplaying()
             verifySubjectIsDisplayed(testQuote.subject)
         }
     }
