@@ -68,7 +68,7 @@ class TestScreenTwo {
     @Test
     fun topAppBar_verifySubjectTextIsDisplaying() {
         QuoteRobot.withRobot(composeTestRule) {
-            clickOnTag("subject_card")
+            clickOnSubjectCard()
             verifyTopAppBarTitleIsDisplaying()
             verifySubjectTopAppBarShouldDisplaySubjectTest("Subject")
         }
@@ -77,7 +77,7 @@ class TestScreenTwo {
     @Test
     fun clickOnBackButton_verifySubjectsScreenIsDisplayed() {
         QuoteRobot.withRobot(composeTestRule) {
-            clickOnTag("subject_card")
+            clickOnSubjectCard()
             verifyTopAppBarTitleIsDisplaying()
             verifyTopAppBarBackButtonIsDisplaying()
             clickOnTag("top_bar_back_button")

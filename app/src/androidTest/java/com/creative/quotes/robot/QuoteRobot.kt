@@ -1,6 +1,7 @@
 package com.creative.quotes.robot
 
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -20,8 +21,18 @@ class QuoteRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTes
         clickOnTag("bottom_sheet_save_button")
     }
 
+    fun clickOnSubjectCard() {
+        composeTestRule.waitUntil(10000) {
+            composeTestRule.onAllNodesWithTag("subject_card").fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.onNodeWithTag("subject_card").performClick()
+    }
+
     fun selectSubject(subjectName: String) {
-        composeTestRule.onNodeWithText(subjectName).performClick()
+        composeTestRule.waitUntil(10000) {
+            composeTestRule.onAllNodesWithText(subjectName, useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.onNodeWithText(subjectName, useUnmergedTree = true).performClick()
     }
 
     // --- Screen 3 Actions (Update Bottom Sheet) ---
@@ -36,6 +47,9 @@ class QuoteRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTes
 
     // --- Verifications ---
     fun verifyQuoteIsDisplayed(text: String) {
+        composeTestRule.waitUntil(10000) {
+            composeTestRule.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty()
+        }
         composeTestRule.onNodeWithText(text).assertIsDisplayed()
     }
 
@@ -69,6 +83,9 @@ class QuoteRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTes
     }
 
     fun verifyBottomSheetTitleIsDisplayed() {
+        composeTestRule.waitUntil(5000) {
+            composeTestRule.onAllNodesWithTag("bottom_sheet_title").fetchSemanticsNodes().isNotEmpty()
+        }
         composeTestRule.onNodeWithTag("bottom_sheet_title").assertIsDisplayed()
     }
 
