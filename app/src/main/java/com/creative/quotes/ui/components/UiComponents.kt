@@ -114,14 +114,14 @@ fun QuotationCard(
             ) {
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        modifier = Modifier.testTag("quote_author"),
+                        modifier = Modifier.testTag("quote_author_text"),
                         text = quote.author,
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.secondary
                     )
                     if (quote.reference.isNotEmpty()) {
                         Text(
-                            modifier = Modifier.testTag("quote_reference"),
+                            modifier = Modifier.testTag("quote_reference_text"),
                             text = quote.reference,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
@@ -196,6 +196,7 @@ fun SubjectCard(
 ) {
     OutlinedCard(
         modifier = Modifier
+            .testTag("subject_card")
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 6.dp)
             .clickable { onSubjectClick(subject) },
@@ -214,6 +215,7 @@ fun SubjectCard(
                 text = subject,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f)
+                    .testTag("quote_subject_text")
             )
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -291,7 +293,7 @@ fun QuotationDetails(
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
             )
             Text(
-                modifier = Modifier.testTag("quote_author"),
+                modifier = Modifier.testTag("quote_author_text"),
                 text = it.author,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.secondary,
@@ -301,7 +303,7 @@ fun QuotationDetails(
                 Text(
                     modifier = Modifier
                         .padding(top = 8.dp)
-                        .testTag("quote_reference"),
+                        .testTag("quote_reference_text"),
                     text = it.reference,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -322,7 +324,8 @@ fun QuotationDetails(
                 ) {
                     Text(
                         text = it.subject,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                            .testTag("quote_subject_text"),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -366,7 +369,8 @@ fun TopAppBarAllQuotes(
                 "Quotations",
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold
-                )
+                ),
+                modifier = Modifier.testTag("top_bar_title")
             )
         },
         colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
@@ -374,7 +378,10 @@ fun TopAppBarAllQuotes(
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         actions = {
-            IconButton(onClick = onAddClick) {
+            IconButton(
+                onClick = onAddClick,
+                modifier = Modifier.testTag("top_bar_add_button")
+            ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Quotation...",
@@ -382,7 +389,10 @@ fun TopAppBarAllQuotes(
                 )
             }
             Box {
-                IconButton(onClick = { showMenu = true }) {
+                IconButton(
+                    onClick = { showMenu = true },
+                    modifier = Modifier.testTag("top_bar_settings_button")
+                ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Settings",
@@ -414,7 +424,8 @@ fun TopAppBarAllQuotes(
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(20.dp)
                             )
-                        }
+                        },
+                        modifier = Modifier.testTag("top_bar_backup_button")
                     )
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
                     DropdownMenuItem(
@@ -437,7 +448,8 @@ fun TopAppBarAllQuotes(
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(20.dp)
                             )
-                        }
+                        },
+                        modifier = Modifier.testTag("top_bar_restore_button")
                     )
                 }
             }
@@ -461,14 +473,18 @@ fun TopAppBarQuotesContent(
                 "Quotation Details",
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.SemiBold
-                )
+                ),
+                modifier = Modifier.testTag("top_bar_title")
             )
         },
         colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
         navigationIcon = {
-            IconButton(onClick = onBack) {
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier.testTag("top_bar_back_button")
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back to quotations",
@@ -477,9 +493,12 @@ fun TopAppBarQuotesContent(
             }
         },
         actions = {
-            IconButton(onClick = {
-                quote?.let { onShare(it) }
-            }) {
+            IconButton(
+                onClick = {
+                    quote?.let { onShare(it) }
+                },
+                modifier = Modifier.testTag("top_bar_share_button")
+            ) {
                 Icon(
                     imageVector = Icons.Default.Share,
                     contentDescription = "Share Quotation",
@@ -487,7 +506,10 @@ fun TopAppBarQuotesContent(
                 )
             }
             Box {
-                IconButton(onClick = { showMenu = true }) {
+                IconButton(
+                    onClick = { showMenu = true },
+                    modifier = Modifier.testTag("top_bar_more_button")
+                ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "More options",
@@ -500,12 +522,14 @@ fun TopAppBarQuotesContent(
                     shape = MaterialTheme.shapes.large
                 ) {
                     DropdownMenuItem(
+                        modifier = Modifier.testTag("top_bar_edit_button"),
                         text = { 
                             Text(
                                 "Edit",
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     fontWeight = FontWeight.Medium
                                 )
+//                                modifier = Modifier.testTag("top_bar_edit_button")
                             ) 
                         },
                         onClick = {
@@ -523,6 +547,7 @@ fun TopAppBarQuotesContent(
                     )
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
                     DropdownMenuItem(
+                        modifier = Modifier.testTag("top_bar_delete_button"),
                         text = { 
                             Text(
                                 "Delete",
@@ -530,6 +555,7 @@ fun TopAppBarQuotesContent(
                                     fontWeight = FontWeight.Medium
                                 ),
                                 color = MaterialTheme.colorScheme.error
+//                                modifier = Modifier.testTag("top_bar_delete_button")
                             ) 
                         },
                         onClick = {
@@ -564,7 +590,8 @@ fun TopBarQuotesBySubject(
                 subject,
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.Bold
-                )
+                ),
+                modifier = Modifier.testTag("top_bar_title")
             )
         },
         colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
@@ -572,7 +599,10 @@ fun TopBarQuotesBySubject(
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         navigationIcon = {
-            IconButton(onClick = onBackClick) {
+            IconButton(
+                onClick = onBackClick,
+                modifier = Modifier.testTag("top_bar_back_button")
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back to Subjects",
@@ -582,7 +612,8 @@ fun TopBarQuotesBySubject(
         },
         actions = {
             IconButton(
-                onAddClick
+                onClick = onAddClick,
+                modifier = Modifier.testTag("top_bar_add_button")
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -616,7 +647,8 @@ fun AddQuoteBottomSheet(
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
-            )
+            ),
+            modifier = Modifier.testTag("bottom_sheet_title")
         )
         
         OutlinedTextField(
@@ -716,7 +748,8 @@ fun AddQuoteBottomSheet(
             modifier = Modifier
                 .padding(top = 8.dp)
                 .fillMaxWidth()
-                .height(56.dp),
+                .height(56.dp)
+                .testTag("bottom_sheet_save_button"),
             shape = MaterialTheme.shapes.large
         ) {
             Icon(Icons.Default.Save, contentDescription = null)
@@ -755,7 +788,8 @@ fun EditQuoteBottomSheet(
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
-            )
+            ),
+            modifier = Modifier.testTag("bottom_sheet_title")
         )
         
         OutlinedTextField(
@@ -855,7 +889,8 @@ fun EditQuoteBottomSheet(
             modifier = Modifier
                 .padding(top = 8.dp)
                 .fillMaxWidth()
-                .height(56.dp),
+                .height(56.dp)
+                .testTag("bottom_sheet_edit_button"),
             shape = MaterialTheme.shapes.large
         ) {
             Icon(Icons.Default.Save, contentDescription = null)

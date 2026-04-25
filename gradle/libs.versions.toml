@@ -14,11 +14,20 @@ espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
 kotlin = "2.3.20"
+ktlint = "12.1.2"
 composeBom = "2026.04.01"
 roomRuntime = "2.8.4"
 uiautomator = "2.3.0"
+kotlinxCoroutines = "1.10.1"
+mockito = "5.15.2"
+mockitoKotlin = "5.4.0"
+turbine = "1.2.0"
 
 [libraries]
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 androidx-compose-bom-v20260401 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-espresso-core-v351 = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
@@ -63,3 +72,4 @@ androidx-compose-material-icons-extended = { group = "androidx.compose.material"
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
