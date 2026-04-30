@@ -36,7 +36,6 @@ class TestScreenOneAddQuote {
         }
     }
 
-    @FlakyTest
     @Test
     fun clickOnSaveQuoteButton_verifyQuoteIsAdded() {
         QuoteRobot.withRobot(composeTestRule) {
