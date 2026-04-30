@@ -36,7 +36,6 @@ class TestScreenOneAddQuote {
         }
     }
 
-
     @Test
     fun clickOnSaveQuoteButton_verifyQuoteIsAdded() {
         QuoteRobot.withRobot(composeTestRule) {
